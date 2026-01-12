@@ -1,4 +1,5 @@
 import { pgTable, serial, text, timestamp, boolean } from 'drizzle-orm/pg-core';
+import { getTableColumns } from 'drizzle-orm/utils';
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
@@ -14,5 +15,8 @@ export const users = pgTable('users', {
     .notNull(),
 });
 
+const { password, ...usersWithoutPassword } = getTableColumns(users);
+
+export { usersWithoutPassword };
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;

@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
-import { NewUser, users } from './users.schema';
+import { NewUser, users, usersWithoutPassword } from './users.schema';
 import { DatabaseModule, type Database } from '../../database.module';
 
 @Injectable()
@@ -24,7 +24,7 @@ export class UserRepository {
         password: userData.password,
         name: userData.name,
       })
-      .returning()
+      .returning(usersWithoutPassword)
       .then((result) => result[0]);
   }
 }
