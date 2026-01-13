@@ -32,8 +32,6 @@ export class AuthService {
   }
 
   async validateUserCredentials(email: string, password: string) {
-    console.log('JwtService options:', this.jwtService);
-
     const user = await this.userService.validateUser(email, password);
     if (!user) {
       throw new InvalidCredentialsException();
