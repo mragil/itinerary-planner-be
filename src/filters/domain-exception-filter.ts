@@ -4,11 +4,12 @@ import {
   ArgumentsHost,
   HttpException,
   HttpStatus,
+  Logger,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 
 function getInfo(exception: unknown): { statusCode: number; message: string } {
-  console.error('Exception caught by DomainExceptionFilter:', exception);
+  const logger = new Logger('DomainExceptionFilter');
   if (exception instanceof HttpException) {
     let message = exception.message;
     if (typeof exception === 'object') {
@@ -17,9 +18,12 @@ function getInfo(exception: unknown): { statusCode: number; message: string } {
         message = response.message as string;
       }
     }
+
+    logger.error(`HTTP Exception: ${message}`);
     return { statusCode: exception.getStatus(), message };
   }
 
+  logger.error(`Unknown Exception: ${JSON.stringify(exception)}`);
   return {
     statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
     message: 'Internal server error',
@@ -28,6 +32,7 @@ function getInfo(exception: unknown): { statusCode: number; message: string } {
 
 @Catch()
 export class DomainExceptionFilter implements ExceptionFilter {
+  private readonly logger = new Logger(DomainExceptionFilter.name);
   catch(exception: unknown, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();

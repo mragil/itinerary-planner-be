@@ -15,16 +15,16 @@ import { ConfigService } from '@nestjs/config';
           global: true,
           secret: configService.getOrThrow<string>('JWT_SECRET'),
           signOptions: {
-            expiresIn: configService.getOrThrow<number>('JWT_EXPIRES_IN'),
+            expiresIn: Number(
+              configService.getOrThrow<number>('JWT_EXPIRES_IN'),
+            ),
           },
         };
       },
     }),
   ],
   controllers: [AuthController],
-  providers: [
-    AuthService,
-  ],
-  exports: [JwtModule]
+  providers: [AuthService],
+  exports: [JwtModule],
 })
 export class AuthModule {}

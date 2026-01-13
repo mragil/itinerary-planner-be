@@ -1,12 +1,18 @@
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { ConsoleLogger, Logger, ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
 import { DomainExceptionFilter } from './filters/domain-exception-filter';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: new ConsoleLogger({
+      json: true,
+      timestamp: true,
+      colors: process.env.NODE_ENV !== 'production',
+    })
+  });
   
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new DomainExceptionFilter());
@@ -16,6 +22,7 @@ async function bootstrap() {
     .setDescription('Collection of APIs for Itinerary Planner Application')
     .setVersion('1.0')
     .addTag('itinerary-planner')
+    .addBearerAuth()
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);

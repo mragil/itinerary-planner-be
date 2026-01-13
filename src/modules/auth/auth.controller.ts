@@ -33,9 +33,4 @@ export class AuthController {
   async register(@Body() registerDto: RegisterDto) {
     return await this.authService.registerUser(registerDto);
   }
-
-  @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
-  }
 }
