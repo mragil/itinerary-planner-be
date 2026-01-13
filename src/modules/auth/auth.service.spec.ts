@@ -6,6 +6,7 @@ import {
   InvalidCredentialsException,
   UserAlreadyExistsException,
 } from './auth.exceptions';
+import { JwtService } from '@nestjs/jwt';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -17,10 +18,14 @@ describe('AuthService', () => {
       createUser: jest.fn(),
       validateUser: jest.fn(),
     };
+    const mockJwtService = {
+      signAsync: jest.fn().mockReturnValue('mocked-jwt-token'),
+    };
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
         { provide: UsersService, useValue: mockUsersService },
+        { provide: JwtService, useValue: mockJwtService },
       ],
     }).compile();
 
@@ -41,7 +46,10 @@ describe('AuthService', () => {
 
       const result = await service.registerUser(userData);
 
-      expect(result).toEqual(mockExistingUser);
+      expect(result).toEqual({
+        accessToken: 'mocked-jwt-token',
+        user: mockExistingUser,
+      });
     });
 
     it('should throw UserAlreadyExistsException if user exists', async () => {
@@ -74,7 +82,9 @@ describe('AuthService', () => {
         userData.password,
       );
 
-      expect(result).toEqual(mockExistingUser);
+      expect(result).toEqual({
+        accessToken: 'mocked-jwt-token',
+      });
     });
 
     it('should throw InvalidCredentialsException if email or password wrong', async () => {

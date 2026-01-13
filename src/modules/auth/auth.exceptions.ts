@@ -1,23 +1,13 @@
-import { HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
-export class UserAlreadyExistsException extends Error {
+export class UserAlreadyExistsException extends HttpException {
   constructor(email: string) {
-    super(`User with email ${email} already exists.`);
-    this.name = 'UserAlreadyExistsException';
-  }
-
-  getStatusCode(): number {
-    return HttpStatus.BAD_REQUEST;
+    super(`User with email ${email} already exists.`, HttpStatus.BAD_REQUEST);
   }
 }
 
-export class InvalidCredentialsException extends Error {
+export class InvalidCredentialsException extends HttpException {
   constructor() {
-    super('Invalid email or password.');
-    this.name = 'InvalidCredentialsException';
-  }
-
-  getStatusCode(): number {
-    return HttpStatus.BAD_REQUEST;
+    super('Invalid email or password.', HttpStatus.UNAUTHORIZED);
   }
 }

@@ -34,8 +34,10 @@ describe('AuthController', () => {
         email: 'test@example.com',
         password: 'password',
       };
-      const user = createUser({});
-      authService.validateUserCredentials.mockResolvedValue(user);
+
+      authService.validateUserCredentials.mockResolvedValue({
+        accessToken: 'usertoken',
+      });
 
       const token = await controller.login(loginDto);
 
@@ -43,7 +45,7 @@ describe('AuthController', () => {
         loginDto.email,
         loginDto.password,
       );
-      expect(token).toBe('usertoken');
+      expect(token).toEqual({ accessToken: 'usertoken' });
     });
   });
 
@@ -55,12 +57,15 @@ describe('AuthController', () => {
         name: 'Test',
       };
       const user = createUser({});
-      authService.registerUser.mockResolvedValue(createUser({}));
+      authService.registerUser.mockResolvedValue({
+        user,
+        accessToken: 'usertoken',
+      });
 
       const result = await controller.register(registerDto);
 
       expect(authService.registerUser).toHaveBeenCalledWith(registerDto);
-      expect(result).toEqual(user);
+      expect(result).toEqual({ user, accessToken: 'usertoken' });
     });
   });
 });

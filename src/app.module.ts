@@ -4,9 +4,12 @@ import { ItineraryModule } from './modules/itinerary/itinerary.module';
 import { TripModule } from './modules/trip/trip.module';
 import { UsersModule } from './modules/users/users.module';
 import { DatabaseModule } from './database.module';
-import { UsersController } from './modules/users/users.controller';
 import configuration from './config/configuration';
 import { ConfigModule } from '@nestjs/config';
+import { AuthGuard } from './guards/auth.guard';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -20,6 +23,11 @@ import { ConfigModule } from '@nestjs/config';
     TripModule,
     UsersModule,
   ],
-  controllers: [UsersController],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+  ],
 })
 export class AppModule {}
