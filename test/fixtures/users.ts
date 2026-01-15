@@ -21,6 +21,6 @@ export const createUser = (
     createdAt: createdAt ?? MOCK_DATE,
     updatedAt: updatedAt ?? createdAt ?? MOCK_DATE,
     emailVerified: emailVerified ?? false,
-    roles: (roles ?? ['user']) as string[],
+    roles: roles ?? ['user'],
   };
 };

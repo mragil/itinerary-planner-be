@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { CreateTripDto } from './dto/create-trip.dto';
 import { UpdateTripDto } from './dto/update-trip.dto';
 import { TripRepository } from './trip.repository';
@@ -15,19 +15,35 @@ export class TripService {
     });
   }
 
-  findAll(userId: number) {
-    return this.tripRepository.getAll(userId);
+  async findAll(userId: number) {
+    const trips = await this.tripRepository.getAll(userId);
+
+    return { trips };
   }
 
-  findOne(id: number, userId: number) {
-    return this.tripRepository.getById(id, userId);
+  async findOne(id: number, userId: number) {
+    const trip = await this.tripRepository.getById(id, userId);
+
+    if (!trip) {
+      throw new HttpException('Trip not found', 404);
+    }
+
+    return trip;
   }
 
-  update(id: number, updateTripDto: UpdateTripDto, userId: number) {
-    return this.tripRepository.update(id, updateTripDto, userId);
+  async update(id: number, updateTripDto: UpdateTripDto, userId: number) {
+    const result = await this.tripRepository.update(id, updateTripDto, userId);
+    if (!result) {
+      throw new HttpException('Trip not found', 404);
+    }
+    return result;
   }
 
-  remove(id: number, userId: number) {
-    return this.tripRepository.remove(id, userId);
+  async remove(id: number, userId: number) {
+    const result = await this.tripRepository.remove(id, userId);
+    if (!result) {
+      throw new HttpException('Trip not found', 404);
+    }
+    return result;
   }
 }
