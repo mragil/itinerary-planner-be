@@ -22,7 +22,6 @@ function getInfo(exception: unknown): { statusCode: number; message: string } {
     logger.error(`HTTP Exception: ${message}`);
     return { statusCode: exception.getStatus(), message };
   }
-  console.log(exception);
   logger.error(`Unknown Exception: ${JSON.stringify(exception)}`);
   return {
     statusCode: HttpStatus.INTERNAL_SERVER_ERROR,

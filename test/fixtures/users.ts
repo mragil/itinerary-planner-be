@@ -10,7 +10,7 @@ export const createUser = (
     updatedAt,
     emailVerified,
     roles,
-  }: Partial<User>,
+  }: Partial<User> = {},
   MOCK_DATE = new Date('2026-01-11T20:00:00.000Z'),
 ) => {
   return {

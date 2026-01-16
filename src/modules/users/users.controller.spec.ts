@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
+import { createUser } from '../../../test/fixtures/users';
 
 describe('UsersController', () => {
   let controller: UsersController;
@@ -24,18 +25,10 @@ describe('UsersController', () => {
   });
 
   it('should return user by email', async () => {
-    const mockUser = {
-      id: 1,
-      email: 'test@example.com',
-      password: 'plain',
-      name: 'Test',
-      createdAt: MOCK_DATE,
-      updatedAt: MOCK_DATE,
-      emailVerified: false,
-    };
+    const mockUser = createUser();
     userService.findByEmail.mockResolvedValue(mockUser);
 
-    const result = await controller.findUserByEmail('test@example.com');
+    const result = await controller.findUserByEmail(mockUser.email);
 
     expect(result).toEqual(mockUser);
   });

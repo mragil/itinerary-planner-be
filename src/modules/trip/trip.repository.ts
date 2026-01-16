@@ -53,7 +53,7 @@ export class TripRepository {
           user_id
       `,
     );
-    return result.rows;
+    return result.rows[0];
   }
 
   async update(id: number, trip: Partial<Trip>, userId: number) {
@@ -103,7 +103,7 @@ export class TripRepository {
       return null;
     }
 
-    return result.rows;
+    return result.rows[0];
   }
 
   async remove(id: number, userId: number) {
@@ -124,6 +124,6 @@ export class TripRepository {
     if (result.rowCount === 0) {
       return null;
     }
-    return result.rows;
+    return result.rows[0];
   }
 }
