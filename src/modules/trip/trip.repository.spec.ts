@@ -84,7 +84,7 @@ describe('TripRepository', () => {
 
       const result = await repository.create(newTrip);
 
-      expect(result).toEqual([created]);
+      expect(result).toEqual(created);
       expect(mockDb.execute).toHaveBeenCalledTimes(1);
     });
   });
@@ -103,7 +103,7 @@ describe('TripRepository', () => {
 
       const result = await repository.update(id, updateData, userId);
 
-      expect(result).toEqual([updated]);
+      expect(result).toEqual(updated);
       expect(mockDb.execute).toHaveBeenCalledTimes(1);
     });
 
@@ -131,7 +131,7 @@ describe('TripRepository', () => {
 
       const result = await repository.update(id, updateData, userId);
 
-      expect(result).toEqual([updated]);
+      expect(result).toEqual(updated);
       expect(mockDb.execute).toHaveBeenCalledTimes(1);
     });
   });
@@ -152,7 +152,7 @@ describe('TripRepository', () => {
 
       const result = await repository.remove(id, userId);
 
-      expect(result).toEqual([deleted]);
+      expect(result).toEqual(deleted);
       expect(mockDb.execute).toHaveBeenCalledTimes(1);
     });
 
