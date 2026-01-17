@@ -19,7 +19,6 @@ function getInfo(exception: unknown): { statusCode: number; message: string } {
       }
     }
 
-    logger.error(`HTTP Exception: ${message}`);
     return { statusCode: exception.getStatus(), message };
   }
   logger.error(`Unknown Exception: ${JSON.stringify(exception)}`);
@@ -33,6 +32,7 @@ function getInfo(exception: unknown): { statusCode: number; message: string } {
 export class DomainExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(DomainExceptionFilter.name);
   catch(exception: unknown, host: ArgumentsHost): void {
+    this.logger.error('Error happend: ', exception);
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();

@@ -22,6 +22,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   trips: many(trips),
 }));
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const { password, ...usersWithoutPassword } = getTableColumns(users);
 
 export { usersWithoutPassword };

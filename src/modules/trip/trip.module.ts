@@ -8,5 +8,6 @@ import { DatabaseModule } from '../../database.module';
   imports: [DatabaseModule],
   controllers: [TripController],
   providers: [TripRepository, TripService],
+  exports: [TripService],
 })
 export class TripModule {}

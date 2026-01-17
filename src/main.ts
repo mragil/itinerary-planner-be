@@ -1,5 +1,5 @@
-import { HttpAdapterHost, NestFactory } from '@nestjs/core';
-import { ConsoleLogger, Logger, ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+import { ConsoleLogger, ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
@@ -11,14 +11,16 @@ async function bootstrap() {
       json: true,
       timestamp: true,
       colors: process.env.NODE_ENV !== 'production',
-    })
+    }),
   });
-  
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true,
-    forbidNonWhitelisted: true,
-    transform: true,
-  }));
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
   app.useGlobalFilters(new DomainExceptionFilter());
 
   const config = new DocumentBuilder()
@@ -33,4 +35,5 @@ async function bootstrap() {
 
   await app.listen(process.env.PORT ?? 3000);
 }
+
 bootstrap();

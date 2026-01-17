@@ -30,8 +30,7 @@ export default tseslint.config(
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-floating-promises': 'warn',
       '@typescript-eslint/no-unsafe-argument': 'warn',
-      "prettier/prettier": ["error", { endOfLine: "auto" }],
-      'jest/unbound-method': 'error',
+      'prettier/prettier': ['error', { endOfLine: 'auto' }],
     },
   },
   {
@@ -42,7 +41,6 @@ export default tseslint.config(
     rules: {
       ...jest.configs.recommended.rules,
       '@typescript-eslint/unbound-method': 'off',
-      'jest/unbound-method': 'error',
     },
   },
 );

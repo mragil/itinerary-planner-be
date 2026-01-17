@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
 import { UserRepository } from './users.repository';
+import { createUser } from '../../../test/fixtures/users';
 
 jest.mock('bcrypt', () => ({
   hash: jest.fn((password: string) => `hashed-${password}`),
@@ -34,15 +35,11 @@ describe('UsersService', () => {
   });
 
   it('should register user', async () => {
-    const mockUser = {
-      id: 1,
+    const mockUser = createUser({
       email: 'test@example.com',
       password: 'plain',
       name: 'Test',
-      createdAt: MOCK_DATE,
-      updatedAt: MOCK_DATE,
-      emailVerified: false,
-    };
+    });
     userRepository.createUser.mockResolvedValue(mockUser);
 
     const result = await service.createUser({

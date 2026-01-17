@@ -7,9 +7,7 @@ import { type NewUser } from './users.schema';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    private readonly userRepository: UserRepository,
-  ) {}
+  constructor(private readonly userRepository: UserRepository) {}
 
   async findByEmail(email: string) {
     return this.userRepository.findByEmail(email);

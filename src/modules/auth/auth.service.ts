@@ -6,7 +6,6 @@ import {
   InvalidCredentialsException,
   UserAlreadyExistsException,
 } from './auth.exceptions';
-import { access } from 'fs';
 import { TokenPayload } from '../app.types';
 
 @Injectable()
@@ -36,7 +35,11 @@ export class AuthService {
     if (!user) {
       throw new InvalidCredentialsException();
     }
-    const payload: TokenPayload = { sub: user.id, email: user.email, name: user.name };
+    const payload: TokenPayload = {
+      sub: user.id,
+      email: user.email,
+      name: user.name,
+    };
     const token = await this.jwtService.signAsync(payload);
 
     return {

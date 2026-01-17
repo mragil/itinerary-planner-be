@@ -44,7 +44,10 @@ describe('TripService', () => {
     it('should return a trip if found', async () => {
       const userId = 1;
       const tripId = 1;
-      const mockTrip = createTrip({ id: tripId, destination: 'Paris', userId });
+      const mockTrip = {
+        ...createTrip({ id: tripId, destination: 'Paris', userId }),
+        activities: [],
+      };
       tripRepository.getById.mockResolvedValue(mockTrip);
 
       const result = await service.findOne(tripId, userId);
@@ -56,7 +59,7 @@ describe('TripService', () => {
     it('should throw an HttpException if trip not found', async () => {
       const userId = 1;
       const tripId = 999;
-      tripRepository.getById.mockResolvedValue(undefined);
+      tripRepository.getById.mockResolvedValue(null);
 
       await expect(service.findOne(tripId, userId)).rejects.toThrow(
         'Trip not found',

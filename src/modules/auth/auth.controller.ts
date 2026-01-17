@@ -5,8 +5,6 @@ import {
   Request,
   HttpCode,
   HttpStatus,
-  UseGuards,
-  Get,
 } from '@nestjs/common';
 
 import { AuthService } from './auth.service';

@@ -8,6 +8,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { users } from '../users/users.schema';
 import { relations } from 'drizzle-orm/relations';
+import { Activity } from '../activity/activity.schema';
 
 export const trips = pgTable('trips', {
   id: serial('id').primaryKey(),
@@ -36,3 +37,6 @@ export const tripsRelations = relations(trips, ({ one }) => ({
 
 export type Trip = typeof trips.$inferSelect;
 export type NewTrip = typeof trips.$inferInsert;
+export type DetailTrip = Trip & {
+  activities: Activity[];
+};
