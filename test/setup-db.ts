@@ -30,7 +30,7 @@ export const setupDatabase = async () => {
     connectionString: postgresContainer.getConnectionUri(),
   });
   const testDb = drizzle(pool, { schema });
-  await migrate(testDb, { migrationsFolder: './drizzle' });
+  await migrate(testDb, { migrationsFolder: './migrations' });
 
   const tearDownDb = async () => {
     await pool.end();
