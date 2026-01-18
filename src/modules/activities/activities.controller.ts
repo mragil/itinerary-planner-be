@@ -7,23 +7,23 @@ import {
   Delete,
   Query,
 } from '@nestjs/common';
-import { ActivityService } from './activity.service';
+import { ActivitiesService } from './activities.service';
 import { CreateActivityDto } from './dto/create-activity.dto';
 import { UpdateActivityDto } from './dto/update-activity.dto';
 import { CurrentUser } from '../../decorators/current-user.decorators';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiBearerAuth()
-@Controller('activity')
-export class ActivityController {
-  constructor(private readonly activityService: ActivityService) {}
+@Controller('activities')
+export class ActivitiesController {
+  constructor(private readonly activitiesService: ActivitiesService) {}
 
   @Post()
   create(
     @Body() createActivityDto: CreateActivityDto,
     @CurrentUser('sub') userId: number,
   ) {
-    return this.activityService.create(createActivityDto, userId);
+    return this.activitiesService.create(createActivityDto, userId);
   }
 
   @Patch(':id')
@@ -33,7 +33,7 @@ export class ActivityController {
     @Body() updateActivityDto: UpdateActivityDto,
     @CurrentUser('sub') userId: number,
   ) {
-    return this.activityService.update(id, updateActivityDto, userId, tripId);
+    return this.activitiesService.update(id, updateActivityDto, userId, tripId);
   }
 
   @Delete(':id')
@@ -42,6 +42,6 @@ export class ActivityController {
     @Query('tripId') tripId: number,
     @CurrentUser('sub') userId: number,
   ) {
-    return this.activityService.remove(id, tripId, userId);
+    return this.activitiesService.remove(id, tripId, userId);
   }
 }

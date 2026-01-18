@@ -6,7 +6,9 @@ import {
   IsInt,
   IsBoolean,
   IsNumber,
+  IsDate,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateActivityDto {
   @ApiProperty()
@@ -35,13 +37,15 @@ export class CreateActivityDto {
   location: string;
 
   @ApiProperty()
-  @IsString()
+  @IsDate()
   @IsNotEmpty()
+  @Type(() => Date)
   startTime: Date;
 
   @ApiProperty()
-  @IsString()
+  @IsDate()
   @IsNotEmpty()
+  @Type(() => Date)
   endTime: Date;
 
   @ApiProperty()

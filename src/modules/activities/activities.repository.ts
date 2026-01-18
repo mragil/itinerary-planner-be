@@ -1,16 +1,16 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { eq, and } from 'drizzle-orm';
-import { NewActivity, Activity, activities } from './activity.schema';
+import { NewActivity, Activity, activities } from './activities.schema';
 import { DatabaseModule, type Database } from '../../database.module';
 
 @Injectable()
-export class ActivityRepository {
+export class ActivitiesRepository {
   constructor(
     @Inject(DatabaseModule.DB_TOKEN)
     private readonly db: Database,
   ) {}
 
-  async getAll(tripId: number) {
+  async findAll(tripId: number) {
     return await this.db
       .select()
       .from(activities)
@@ -47,7 +47,7 @@ export class ActivityRepository {
     return result[0] ?? null;
   }
 
-  async remove(id: number, tripId: number) {
+  async delete(id: number, tripId: number) {
     const result = await this.db
       .delete(activities)
       .where(and(eq(activities.id, id), eq(activities.tripId, tripId)))

@@ -24,7 +24,7 @@ export class AuthService {
     if (isExistingUser) {
       throw new UserAlreadyExistsException(userData.email);
     }
-    const user = await this.userService.createUser(userData);
+    const user = await this.userService.create(userData);
     const payload = { sub: user.id, email: user.email, name: user.name };
     const token = await this.jwtService.signAsync(payload);
     return { accessToken: token, user };

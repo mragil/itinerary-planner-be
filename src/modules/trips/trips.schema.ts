@@ -8,7 +8,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { users } from '../users/users.schema';
 import { relations } from 'drizzle-orm/relations';
-import { activities, Activity } from '../activity/activity.schema';
+import { activities, Activity } from '../activities/activities.schema';
 
 export const trips = pgTable('trips', {
   id: serial('id').primaryKey(),

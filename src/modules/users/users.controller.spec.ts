@@ -12,7 +12,7 @@ describe('UsersController', () => {
     jest.useFakeTimers();
     jest.setSystemTime(MOCK_DATE);
     const mockUserService = {
-      createUser: jest.fn(),
+      create: jest.fn(),
       findByEmail: jest.fn(),
     };
     const module: TestingModule = await Test.createTestingModule({

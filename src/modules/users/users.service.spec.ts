@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
-import { UserRepository } from './users.repository';
+import { UsersRepository } from './users.repository';
 import { createUser } from '../../../test/fixtures/users';
 
 jest.mock('bcrypt', () => ({
@@ -12,7 +12,7 @@ jest.mock('bcrypt', () => ({
 
 describe('UsersService', () => {
   let service: UsersService;
-  let userRepository: jest.Mocked<UserRepository>;
+  let usersRepository: jest.Mocked<UsersRepository>;
   const MOCK_DATE = new Date('2026-01-11T20:00:00.000Z');
 
   beforeEach(async () => {
@@ -21,17 +21,17 @@ describe('UsersService', () => {
 
     const mockRepository = {
       findByEmail: jest.fn(),
-      createUser: jest.fn(),
+      create: jest.fn(),
     };
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UsersService,
-        { provide: UserRepository, useValue: mockRepository },
+        { provide: UsersRepository, useValue: mockRepository },
       ],
     }).compile();
 
     service = module.get<UsersService>(UsersService);
-    userRepository = module.get(UserRepository);
+    usersRepository = module.get(UsersRepository);
   });
 
   it('should register user', async () => {
@@ -40,16 +40,16 @@ describe('UsersService', () => {
       password: 'plain',
       name: 'Test',
     });
-    userRepository.createUser.mockResolvedValue(mockUser);
+    usersRepository.create.mockResolvedValue(mockUser);
 
-    const result = await service.createUser({
+    const result = await service.create({
       email: 'test@example.com',
       password: 'plain',
       name: 'Test',
     });
 
     expect(result).toEqual(mockUser);
-    expect(userRepository.createUser).toHaveBeenCalledWith({
+    expect(usersRepository.create).toHaveBeenCalledWith({
       email: 'test@example.com',
       password: 'hashed-plain',
       name: 'Test',

@@ -4,7 +4,7 @@ import { NewUser, users, usersWithoutPassword } from './users.schema';
 import { DatabaseModule, type Database } from '../../database.module';
 
 @Injectable()
-export class UserRepository {
+export class UsersRepository {
   constructor(
     @Inject(DatabaseModule.DB_TOKEN)
     private readonly db: Database,
@@ -16,7 +16,7 @@ export class UserRepository {
     });
   }
 
-  async createUser(userData: NewUser) {
+  async create(userData: NewUser) {
     return this.db
       .insert(users)
       .values({

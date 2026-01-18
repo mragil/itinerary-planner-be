@@ -1,13 +1,13 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { CreateActivityDto } from './dto/create-activity.dto';
 import { UpdateActivityDto } from './dto/update-activity.dto';
-import { ActivityRepository } from './activity.repository';
+import { ActivitiesRepository } from './activities.repository';
 import { TripsService } from '../trips/trips.service';
 
 @Injectable()
-export class ActivityService {
+export class ActivitiesService {
   constructor(
-    private readonly activityRepository: ActivityRepository,
+    private readonly activitiesRepository: ActivitiesRepository,
     private readonly tripsService: TripsService,
   ) {}
 
@@ -22,7 +22,7 @@ export class ActivityService {
   async create(createActivityDto: CreateActivityDto, userId: number) {
     await this.validateTripOwnership(userId, createActivityDto.tripId);
 
-    return this.activityRepository.create({
+    return this.activitiesRepository.create({
       ...createActivityDto,
       startTime: new Date(createActivityDto.startTime),
       endTime: new Date(createActivityDto.endTime),
@@ -31,7 +31,7 @@ export class ActivityService {
 
   async findAll(tripId: number, userId: number) {
     await this.validateTripOwnership(userId, tripId);
-    const activities = await this.activityRepository.getAll(tripId);
+    const activities = await this.activitiesRepository.findAll(tripId);
 
     return { activities };
   }
@@ -44,7 +44,7 @@ export class ActivityService {
   ) {
     await this.validateTripOwnership(userId, tripId);
 
-    const result = await this.activityRepository.update(
+    const result = await this.activitiesRepository.update(
       id,
       updateActivityDto,
       tripId,
@@ -57,7 +57,7 @@ export class ActivityService {
 
   async remove(id: number, tripId: number, userId: number) {
     await this.validateTripOwnership(userId, tripId);
-    const result = await this.activityRepository.remove(id, tripId);
+    const result = await this.activitiesRepository.delete(id, tripId);
     if (!result) {
       throw new HttpException('Activity not found', 404);
     }

@@ -2,7 +2,7 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthModule } from './modules/auth/auth.module';
-import { ActivityModule } from './modules/activity/activity.module';
+import { ActivitiesModule } from './modules/activities/activities.module';
 import { TripsModule } from './modules/trips/trips.module';
 import { UsersModule } from './modules/users/users.module';
 import { DatabaseModule } from './database.module';
@@ -20,7 +20,7 @@ import { LoggerMiddleware } from './middlewares/logger.middleware';
     AuthModule,
     TripsModule,
     UsersModule,
-    ActivityModule,
+    ActivitiesModule,
   ],
   providers: [
     {

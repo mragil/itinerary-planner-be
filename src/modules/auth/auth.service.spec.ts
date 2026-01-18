@@ -15,7 +15,7 @@ describe('AuthService', () => {
   beforeEach(async () => {
     const mockUsersService = {
       findByEmail: jest.fn(),
-      createUser: jest.fn(),
+      create: jest.fn(),
       validateUser: jest.fn(),
     };
     const mockJwtService = {
@@ -42,7 +42,7 @@ describe('AuthService', () => {
       };
       const mockExistingUser = createUser(userData);
       usersService.findByEmail.mockResolvedValue(undefined);
-      usersService.createUser.mockResolvedValue(mockExistingUser);
+      usersService.create.mockResolvedValue(mockExistingUser);
 
       const result = await service.registerUser(userData);
 
