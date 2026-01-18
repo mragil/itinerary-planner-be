@@ -12,11 +12,7 @@ export class ActivitiesService {
   ) {}
 
   private async validateTripOwnership(userId: number, tripId: number) {
-    const trip = await this.tripsService.findOne(tripId, userId);
-
-    if (!trip) {
-      throw new HttpException('Access Denied', 403);
-    }
+    await this.tripsService.findOne(tripId, userId);
   }
 
   async create(createActivityDto: CreateActivityDto, userId: number) {

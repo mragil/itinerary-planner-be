@@ -93,10 +93,11 @@ describe('TripsRepository', () => {
       expect(mockDb.query.trips.findFirst).toHaveBeenCalledTimes(1);
     });
 
-    it('should throw Error if trip not found', async () => {
+    it('should return null if trip not found', async () => {
       mockDb.query.trips.findFirst.mockResolvedValue(undefined);
 
-      await expect(repository.findById(1, 1)).rejects.toThrow();
+      const result = await repository.findById(1, 1);
+      expect(result).toBeNull();
     });
   });
 
@@ -146,9 +147,10 @@ describe('TripsRepository', () => {
       expect(mockDb.returning).toHaveBeenCalledTimes(1);
     });
 
-    it('should throw error if not found', async () => {
+    it('should return null if not found', async () => {
       (mockDb.returning as jest.Mock).mockResolvedValue([]);
-      await expect(repository.update(1, {}, 1)).rejects.toThrow();
+      const result = await repository.update(1, {}, 1);
+      expect(result).toBeNull();
     });
   });
 
@@ -171,10 +173,11 @@ describe('TripsRepository', () => {
       expect(mockDb.returning).toHaveBeenCalledTimes(1);
     });
 
-    it('should throw error if trip not found', async () => {
+    it('should return null if trip not found', async () => {
       (mockDb.returning as jest.Mock).mockResolvedValue([]);
 
-      await expect(repository.delete(1, 1)).rejects.toThrow();
+      const result = await repository.delete(1, 1);
+      expect(result).toBeNull();
     });
   });
 });

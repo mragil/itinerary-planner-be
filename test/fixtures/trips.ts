@@ -1,4 +1,5 @@
 import { Trip } from '../../src/modules/trips/trips.schema';
+import { Activity } from '../../src/modules/activities/activities.schema';
 
 export const createTrip = (
   {
@@ -11,7 +12,8 @@ export const createTrip = (
     userId,
     createdAt,
     updatedAt,
-  }: Partial<Trip>,
+    activities,
+  }: Partial<Trip & { activities: Activity[] }>,
   MOCK_DATE = new Date('2026-01-11T20:00:00.000Z'),
 ) => {
   return {
@@ -24,5 +26,6 @@ export const createTrip = (
     userId: userId ?? 1,
     createdAt: createdAt ?? MOCK_DATE,
     updatedAt: updatedAt ?? createdAt ?? MOCK_DATE,
+    activities: activities ?? [],
   };
 };

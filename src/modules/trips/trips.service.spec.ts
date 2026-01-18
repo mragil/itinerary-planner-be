@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TripsService } from './trips.service';
 import { TripsRepository } from './trips.repository';
 import { createTrip } from '../../../test/fixtures/trips';
+import { NotFoundException } from '@nestjs/common';
 
 describe('TripsService', () => {
   let service: TripsService;
@@ -44,9 +45,9 @@ describe('TripsService', () => {
     });
 
     it('should throw an error if trip not found', async () => {
-      tripRepository.findById.mockRejectedValue(new Error('Trip not found'));
+      tripRepository.findById.mockResolvedValue(null);
 
-      await expect(service.findOne(1, 1)).rejects.toThrow('Trip not found');
+      await expect(service.findOne(1, 1)).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -59,9 +60,9 @@ describe('TripsService', () => {
     });
 
     it('should throw an error if trip not found', async () => {
-      tripRepository.update.mockRejectedValue(new Error('Trip not found'));
+      tripRepository.update.mockResolvedValue(null);
 
-      await expect(service.update(1, {}, 1)).rejects.toThrow('Trip not found');
+      await expect(service.update(1, {}, 1)).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -74,9 +75,9 @@ describe('TripsService', () => {
     });
 
     it('should throw an error if trip not found', async () => {
-      tripRepository.delete.mockRejectedValue(new Error('Trip not found'));
+      tripRepository.delete.mockResolvedValue(null);
 
-      await expect(service.remove(1, 1)).rejects.toThrow('Trip not found');
+      await expect(service.remove(1, 1)).rejects.toThrow(NotFoundException);
     });
   });
 });

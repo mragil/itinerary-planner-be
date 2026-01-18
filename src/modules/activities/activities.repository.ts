@@ -10,14 +10,14 @@ export class ActivitiesRepository {
     private readonly db: Database,
   ) {}
 
-  async findAll(tripId: number) {
+  async findAll(tripId: number): Promise<Activity[]> {
     return await this.db
       .select()
       .from(activities)
       .where(eq(activities.tripId, tripId));
   }
 
-  async create(activity: NewActivity) {
+  async create(activity: NewActivity): Promise<Activity> {
     const result = await this.db
       .insert(activities)
       .values({
@@ -37,7 +37,11 @@ export class ActivitiesRepository {
     return result[0];
   }
 
-  async update(id: number, activity: Partial<Activity>, tripId: number) {
+  async update(
+    id: number,
+    activity: Partial<Activity>,
+    tripId: number,
+  ): Promise<Activity | null> {
     const result = await this.db
       .update(activities)
       .set(activity)
@@ -47,7 +51,7 @@ export class ActivitiesRepository {
     return result[0] ?? null;
   }
 
-  async delete(id: number, tripId: number) {
+  async delete(id: number, tripId: number): Promise<Activity | null> {
     const result = await this.db
       .delete(activities)
       .where(and(eq(activities.id, id), eq(activities.tripId, tripId)))

@@ -1,6 +1,6 @@
 import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { eq, and } from 'drizzle-orm';
-import { trips } from './trips.schema';
+import { trips, Trip, DetailTrip } from './trips.schema';
 import { DatabaseModule, type Database } from '../../database.module';
 import { CreateTripDto } from './dto/create-trip.dto';
 import { UpdateTripDto } from './dto/update-trip.dto';
@@ -12,7 +12,7 @@ export class TripsRepository {
     private readonly db: Database,
   ) {}
 
-  async create(createTripDto: CreateTripDto, userId: number) {
+  async create(createTripDto: CreateTripDto, userId: number): Promise<Trip> {
     const [result] = await this.db
       .insert(trips)
       .values({ ...createTripDto, userId })
@@ -31,7 +31,7 @@ export class TripsRepository {
     };
   }
 
-  async findById(id: number, userId: number) {
+  async findById(id: number, userId: number): Promise<DetailTrip | null> {
     const result = await this.db.query.trips.findFirst({
       where: and(eq(trips.id, id), eq(trips.userId, userId)),
       with: {
@@ -39,37 +39,29 @@ export class TripsRepository {
       },
     });
 
-    if (!result) {
-      throw new NotFoundException(`Trip with ID ${id} not found`);
-    }
-
-    return result;
+    return result ?? null;
   }
 
-  async update(id: number, updateTripDto: UpdateTripDto, userId: number) {
+  async update(
+    id: number,
+    updateTripDto: UpdateTripDto,
+    userId: number,
+  ): Promise<Trip | null> {
     const [result] = await this.db
       .update(trips)
       .set(updateTripDto)
       .where(and(eq(trips.id, id), eq(trips.userId, userId)))
       .returning();
 
-    if (!result) {
-      throw new NotFoundException(`Trip with ID ${id} not found`);
-    }
-
-    return result;
+    return result ?? null;
   }
 
-  async delete(id: number, userId: number) {
+  async delete(id: number, userId: number): Promise<Trip | null> {
     const [result] = await this.db
       .delete(trips)
       .where(and(eq(trips.id, id), eq(trips.userId, userId)))
       .returning();
 
-    if (!result) {
-      throw new NotFoundException(`Trip with ID ${id} not found`);
-    }
-
-    return result;
+    return result ?? null;
   }
 }
