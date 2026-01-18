@@ -49,7 +49,7 @@ describe('ActivitiesService', () => {
       );
       activitiesRepository.create.mockResolvedValue(activityDto);
 
-      const result = await service.create(activityDto as any, userId);
+      const result = await service.create(activityDto, userId);
 
       expect(tripsService.findOne).toHaveBeenCalledWith(
         activityDto.tripId,
@@ -64,7 +64,7 @@ describe('ActivitiesService', () => {
       const userId = 1;
       tripsService.findOne.mockRejectedValue(new NotFoundException());
 
-      await expect(service.create(activityDto as any, userId)).rejects.toThrow(
+      await expect(service.create(activityDto, userId)).rejects.toThrow(
         NotFoundException,
       );
     });

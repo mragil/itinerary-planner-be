@@ -79,10 +79,9 @@
     },
     "collectCoverageFrom": [
       "**/*.(t|j)s",
-      "!**/app.module.(t|j)s",
+      "!**/*.module.(t|j)s",
       "!**/main.(t|j)s",
-      "!**/config/configuration.ts",
-      "!**database.module.ts"
+      "!**/config/configuration.ts"
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",

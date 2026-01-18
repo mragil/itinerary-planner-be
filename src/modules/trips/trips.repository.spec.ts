@@ -117,7 +117,7 @@ describe('TripsRepository', () => {
       });
       (mockDb.returning as jest.Mock).mockResolvedValue([created]);
 
-      const result = await repository.create(newTrip as any, 1);
+      const result = await repository.create(newTrip, 1);
 
       expect(result).toEqual(created);
       expect(mockDb.insert).toHaveBeenCalledTimes(1);

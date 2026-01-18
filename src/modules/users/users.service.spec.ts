@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
 import { UsersRepository } from './users.repository';
 import { createUser } from '../../../test/fixtures/users';
+import * as bcrypt from 'bcrypt';
 
 jest.mock('bcrypt', () => ({
   hash: jest.fn((password: string) => `hashed-${password}`),
@@ -47,12 +48,54 @@ describe('UsersService', () => {
       password: 'plain',
       name: 'Test',
     });
-
     expect(result).toEqual(mockUser);
     expect(usersRepository.create).toHaveBeenCalledWith({
       email: 'test@example.com',
       password: 'hashed-plain',
       name: 'Test',
+    });
+  });
+  describe('findByEmail', () => {
+    it('should return a user if found', async () => {
+      const user = createUser();
+      usersRepository.findByEmail.mockResolvedValue(user);
+
+      const result = await service.findByEmail('test@example.com');
+
+      expect(result).toBe(user);
+    });
+  });
+
+  describe('validateUser', () => {
+    it('should return user if credentials are valid', async () => {
+      const user = createUser({ password: 'hashed-password' });
+      usersRepository.findByEmail.mockResolvedValue(user);
+      (bcrypt.compare as jest.Mock).mockReturnValue(true);
+
+      const result = await service.validateUser('test@example.com', 'password');
+
+      expect(result).toBe(user);
+    });
+
+    it('should return null if user not found', async () => {
+      usersRepository.findByEmail.mockResolvedValue(undefined);
+
+      const result = await service.validateUser('test@example.com', 'password');
+
+      expect(result).toBeNull();
+    });
+
+    it('should return null if password does not match', async () => {
+      const user = createUser({ password: 'hashed-password' });
+      usersRepository.findByEmail.mockResolvedValue(user);
+      (bcrypt.compare as jest.Mock).mockReturnValue(false);
+
+      const result = await service.validateUser(
+        'test@example.com',
+        'wrongpassword',
+      );
+
+      expect(result).toBeNull();
     });
   });
 });
