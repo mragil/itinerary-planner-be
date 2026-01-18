@@ -16,6 +16,12 @@ describe('UsersService', () => {
   let usersRepository: jest.Mocked<UsersRepository>;
   const MOCK_DATE = new Date('2026-01-11T20:00:00.000Z');
 
+  it('should be instantiated', () => {
+    const repo = { findByEmail: jest.fn(), create: jest.fn() } as any;
+    const svc = new UsersService(repo);
+    expect(svc).toBeDefined();
+  });
+
   beforeEach(async () => {
     jest.useFakeTimers();
     jest.setSystemTime(MOCK_DATE);

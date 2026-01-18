@@ -1,0 +1,1 @@
+pnpm run test:cov && pnpm run test:e2e

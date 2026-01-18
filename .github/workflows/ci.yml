@@ -99,7 +99,7 @@ jobs:
         run: pnpm install
 
       - name: Run Unit Tests
-        run: pnpm run test
+        run: pnpm run test:cov
 
   e2e-test:
     name: E2E Tests

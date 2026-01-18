@@ -80,4 +80,21 @@ describe('DomainExceptionFilter', () => {
       }),
     );
   });
+
+  it('should use default message if response object has no message property', () => {
+    const exception = new HttpException(
+      { error: 'Bad Request' },
+      HttpStatus.BAD_REQUEST,
+    );
+
+    filter.catch(exception, mockArgumentsHost);
+
+    expect(statusMock).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST);
+    expect(jsonMock).toHaveBeenCalledWith({
+      statusCode: HttpStatus.BAD_REQUEST,
+      timestamp: expect.any(String),
+      path: '/test-url',
+      message: 'Http Exception',
+    });
+  });
 });

@@ -99,4 +99,43 @@ describe('AuthGuard', () => {
       UnauthorizedException,
     );
   });
+
+  it('should throw UnauthorizedException if token type is not Bearer', async () => {
+    reflector.getAllAndOverride.mockReturnValue(false);
+    const mockRequest = {
+      headers: {
+        authorization: 'Basic some-token',
+      },
+    };
+    const context = {
+      getHandler: jest.fn(),
+      getClass: jest.fn(),
+      switchToHttp: jest.fn().mockReturnValue({
+        getRequest: jest.fn().mockReturnValue(mockRequest),
+      }),
+    } as unknown as ExecutionContext;
+
+    await expect(guard.canActivate(context)).rejects.toThrow(
+      UnauthorizedException,
+    );
+  });
+  it('should return undefined if authorization header is malformed', async () => {
+    reflector.getAllAndOverride.mockReturnValue(false);
+    const mockRequest = {
+      headers: {
+        authorization: 'Bearer', // Missing token part
+      },
+    };
+    const context = {
+      getHandler: jest.fn(),
+      getClass: jest.fn(),
+      switchToHttp: jest.fn().mockReturnValue({
+        getRequest: jest.fn().mockReturnValue(mockRequest),
+      }),
+    } as unknown as ExecutionContext;
+
+    await expect(guard.canActivate(context)).rejects.toThrow(
+      UnauthorizedException,
+    );
+  });
 });

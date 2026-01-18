@@ -78,6 +78,38 @@ describe('ActivitiesRepository', () => {
       expect(mockDb.returning).toHaveBeenCalled();
       expect(result).toEqual(newActivity);
     });
+
+    it('should handle missing optional fields', async () => {
+      const activityWithoutOptionals = {
+        name: 'Test Activity',
+        type: 'Activity',
+        location: 'Test Location',
+        startTime: new Date(),
+        endTime: new Date(),
+        currency: 'USD',
+        isCompleted: false,
+        tripId: 1,
+        // notes and cost implicitly undefined
+      } as any;
+
+      const expectedActivity = {
+        ...activityWithoutOptionals,
+        id: 1,
+        notes: null,
+        cost: null,
+      };
+
+      (mockDb.returning as jest.Mock).mockResolvedValue([expectedActivity]);
+
+      await repository.create(activityWithoutOptionals);
+
+      expect(mockDb.values).toHaveBeenCalledWith(
+        expect.objectContaining({
+          notes: null,
+          cost: null,
+        }),
+      );
+    });
   });
 
   describe('update', () => {

@@ -12,13 +12,14 @@ function getInfo(exception: unknown): { statusCode: number; message: string } {
   const logger = new Logger('DomainExceptionFilter');
   if (exception instanceof HttpException) {
     let message = exception.message;
-    if (typeof exception === 'object') {
-      const response = exception.getResponse();
-      if (typeof response === 'object' && 'message' in response) {
-        message = response.message as string;
-      }
+    const response = exception.getResponse();
+    if (
+      typeof response === 'object' &&
+      response !== null &&
+      'message' in response
+    ) {
+      message = (response as any).message;
     }
-
     return { statusCode: exception.getStatus(), message };
   }
   logger.error(`Unknown Exception: ${JSON.stringify(exception)}`);
