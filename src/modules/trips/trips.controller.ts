@@ -7,33 +7,33 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { TripService } from './trip.service';
+import { TripsService } from './trips.service';
 import { CreateTripDto } from './dto/create-trip.dto';
 import { UpdateTripDto } from './dto/update-trip.dto';
 import { CurrentUser } from '../../decorators/current-user.decorators';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
-@Controller('trip')
+@Controller('trips')
 @ApiBearerAuth()
-export class TripController {
-  constructor(private readonly tripService: TripService) {}
+export class TripsController {
+  constructor(private readonly tripsService: TripsService) {}
 
   @Post()
   create(
     @Body() createTripDto: CreateTripDto,
     @CurrentUser('sub') userId: number,
   ) {
-    return this.tripService.create(createTripDto, userId);
+    return this.tripsService.create(createTripDto, userId);
   }
 
   @Get()
   findAll(@CurrentUser('sub') userId: number) {
-    return this.tripService.findAll(userId);
+    return this.tripsService.findAll(userId);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string, @CurrentUser('sub') userId: number) {
-    return this.tripService.findOne(+id, userId);
+    return this.tripsService.findOne(+id, userId);
   }
 
   @Patch(':id')
@@ -42,11 +42,11 @@ export class TripController {
     @Body() updateTripDto: UpdateTripDto,
     @CurrentUser('sub') userId: number,
   ) {
-    return this.tripService.update(+id, updateTripDto, userId);
+    return this.tripsService.update(+id, updateTripDto, userId);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string, @CurrentUser('sub') userId: number) {
-    return this.tripService.remove(+id, userId);
+    return this.tripsService.remove(+id, userId);
   }
 }

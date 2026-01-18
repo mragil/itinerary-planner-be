@@ -8,7 +8,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { users } from '../users/users.schema';
 import { relations } from 'drizzle-orm/relations';
-import { Activity } from '../activity/activity.schema';
+import { activities, Activity } from '../activity/activity.schema';
 
 export const trips = pgTable('trips', {
   id: serial('id').primaryKey(),
@@ -28,11 +28,12 @@ export const trips = pgTable('trips', {
     .notNull(),
 });
 
-export const tripsRelations = relations(trips, ({ one }) => ({
+export const tripsRelations = relations(trips, ({ one, many }) => ({
   user: one(users, {
     fields: [trips.userId],
     references: [users.id],
   }),
+  activities: many(activities),
 }));
 
 export type Trip = typeof trips.$inferSelect;

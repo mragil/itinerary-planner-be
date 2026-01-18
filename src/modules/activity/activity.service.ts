@@ -2,17 +2,17 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { CreateActivityDto } from './dto/create-activity.dto';
 import { UpdateActivityDto } from './dto/update-activity.dto';
 import { ActivityRepository } from './activity.repository';
-import { TripService } from '../trip/trip.service';
+import { TripsService } from '../trips/trips.service';
 
 @Injectable()
 export class ActivityService {
   constructor(
     private readonly activityRepository: ActivityRepository,
-    private readonly tripService: TripService,
+    private readonly tripsService: TripsService,
   ) {}
 
   private async validateTripOwnership(userId: number, tripId: number) {
-    const trip = await this.tripService.findOne(tripId, userId);
+    const trip = await this.tripsService.findOne(tripId, userId);
 
     if (!trip) {
       throw new HttpException('Access Denied', 403);

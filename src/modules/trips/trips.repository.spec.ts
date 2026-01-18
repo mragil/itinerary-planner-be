@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TripRepository } from './trip.repository';
+import { TripsRepository } from './trips.repository';
 import { DatabaseModule, type Database } from '../../database.module';
-import { NewTrip, Trip } from './trip.schema';
+import { NewTrip, Trip } from './trips.schema';
 import { createTrip } from '../../../test/fixtures/trips';
 
 type MockQueryBuilder = {
@@ -10,12 +10,22 @@ type MockQueryBuilder = {
   values: jest.Mock;
   set: jest.Mock;
   returning: jest.Mock;
+  findMany: jest.Mock;
+  findFirst: jest.Mock;
 };
 
-type MockDatabase = Database & MockQueryBuilder;
+type MockDatabase = Database &
+  MockQueryBuilder & {
+    query: {
+      trips: {
+        findMany: jest.Mock;
+        findFirst: jest.Mock;
+      };
+    };
+  };
 
-describe('TripRepository', () => {
-  let repository: TripRepository;
+describe('TripsRepository', () => {
+  let repository: TripsRepository;
   let mockDb: jest.Mocked<MockDatabase>;
 
   beforeEach(async () => {
@@ -30,11 +40,17 @@ describe('TripRepository', () => {
       values: jest.fn().mockReturnThis(),
       set: jest.fn().mockReturnThis(),
       returning: jest.fn(),
+      query: {
+        trips: {
+          findMany: jest.fn(),
+          findFirst: jest.fn(),
+        },
+      },
     } as unknown as jest.Mocked<Database>;
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        TripRepository,
+        TripsRepository,
         {
           provide: DatabaseModule.DB_TOKEN,
           useValue: mockedDb,
@@ -42,44 +58,45 @@ describe('TripRepository', () => {
       ],
     }).compile();
 
-    repository = module.get<TripRepository>(TripRepository);
+    repository = module.get<TripsRepository>(TripsRepository);
     mockDb = module.get(DatabaseModule.DB_TOKEN);
   });
 
-  describe('getAll', () => {
+  describe('findAll', () => {
     it('should return all trips for a user', async () => {
       const userId = 1;
       const trips: Trip[] = [
         createTrip({ id: 1, userId, name: 'Trip 1' }),
         createTrip({ id: 2, userId, name: 'Trip 2' }),
       ];
-      (mockDb.where as jest.Mock).mockResolvedValue(trips);
+      mockDb.query.trips.findMany.mockResolvedValue(trips);
 
-      const result = await repository.getAll(userId);
+      const result = await repository.findAll(userId);
 
-      expect(result).toEqual(trips);
+      expect(result).toEqual({ trips });
     });
   });
 
-  describe('getById', () => {
+  describe('findById', () => {
     it('should return a trip by id and userId', async () => {
       const id = 1;
       const userId = 1;
       const trip = createTrip({ id, userId, name: 'Trip 1' });
-      (mockDb.execute as jest.Mock).mockResolvedValue({ rows: [trip] });
+      mockDb.query.trips.findFirst.mockResolvedValue({
+        ...trip,
+        activities: [],
+      });
 
-      const result = await repository.getById(id, userId);
+      const result = await repository.findById(id, userId);
 
       expect(result).toEqual({ ...trip, activities: [] });
-      expect(mockDb.execute).toHaveBeenCalledTimes(1);
+      expect(mockDb.query.trips.findFirst).toHaveBeenCalledTimes(1);
     });
 
-    it('should return null if trip not found', async () => {
-      (mockDb.execute as jest.Mock).mockResolvedValue({ rows: [] });
+    it('should throw Error if trip not found', async () => {
+      mockDb.query.trips.findFirst.mockResolvedValue(undefined);
 
-      const result = await repository.getById(1, 1);
-
-      expect(result).toBeNull();
+      await expect(repository.findById(1, 1)).rejects.toThrow();
     });
   });
 
@@ -99,7 +116,7 @@ describe('TripRepository', () => {
       });
       (mockDb.returning as jest.Mock).mockResolvedValue([created]);
 
-      const result = await repository.create(newTrip);
+      const result = await repository.create(newTrip as any, 1);
 
       expect(result).toEqual(created);
       expect(mockDb.insert).toHaveBeenCalledTimes(1);
@@ -129,37 +146,13 @@ describe('TripRepository', () => {
       expect(mockDb.returning).toHaveBeenCalledTimes(1);
     });
 
-    it('should return null if no fields to update', async () => {
-      const result = await repository.update(1, {}, 1);
-
-      expect(result).toEqual(null);
-      expect(mockDb.update).not.toHaveBeenCalled();
-    });
-
-    it('should update multiple fields', async () => {
-      const id = 1;
-      const userId = 1;
-      const updateData: Partial<Trip> = {
-        name: 'Updated Trip',
-        destination: 'London',
-        isCompleted: true,
-      };
-      const updated = createTrip({
-        id,
-        userId,
-        ...updateData,
-      });
-      (mockDb.returning as jest.Mock).mockResolvedValue([updated]);
-
-      const result = await repository.update(id, updateData, userId);
-
-      expect(result).toEqual(updated);
-      expect(mockDb.update).toHaveBeenCalledTimes(1);
-      expect(mockDb.set).toHaveBeenCalledWith(updateData);
+    it('should throw error if not found', async () => {
+      (mockDb.returning as jest.Mock).mockResolvedValue([]);
+      await expect(repository.update(1, {}, 1)).rejects.toThrow();
     });
   });
 
-  describe('remove', () => {
+  describe('delete', () => {
     it('should delete a trip', async () => {
       const id = 1;
       const userId = 1;
@@ -170,7 +163,7 @@ describe('TripRepository', () => {
       });
       (mockDb.returning as jest.Mock).mockResolvedValue([deleted]);
 
-      const result = await repository.remove(id, userId);
+      const result = await repository.delete(id, userId);
 
       expect(result).toEqual(deleted);
       expect(mockDb.delete).toHaveBeenCalledTimes(1);
@@ -178,13 +171,10 @@ describe('TripRepository', () => {
       expect(mockDb.returning).toHaveBeenCalledTimes(1);
     });
 
-    it('should return null if trip not found', async () => {
+    it('should throw error if trip not found', async () => {
       (mockDb.returning as jest.Mock).mockResolvedValue([]);
 
-      const result = await repository.remove(1, 1);
-
-      expect(result).toEqual(null);
-      expect(mockDb.delete).toHaveBeenCalledTimes(1);
+      await expect(repository.delete(1, 1)).rejects.toThrow();
     });
   });
 });

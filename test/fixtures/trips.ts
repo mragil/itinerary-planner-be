@@ -1,4 +1,4 @@
-import { Trip } from '../../src/modules/trip/trip.schema';
+import { Trip } from '../../src/modules/trips/trips.schema';
 
 export const createTrip = (
   {

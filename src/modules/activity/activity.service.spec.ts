@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ActivityService } from './activity.service';
 import { ActivityRepository } from './activity.repository';
-import { TripService } from '../trip/trip.service';
+import { TripsService } from '../trips/trips.service';
 
 describe('ActivityService', () => {
   let service: ActivityService;
   let activityRepository: jest.Mocked<ActivityRepository>;
-  let tripService: jest.Mocked<TripService>;
+  let tripsService: jest.Mocked<TripsService>;
 
   beforeEach(async () => {
     const mockActivityRepository = {
@@ -15,7 +15,7 @@ describe('ActivityService', () => {
       getAll: jest.fn(),
       remove: jest.fn(),
     };
-    const mockTripService = {
+    const mockTripsService = {
       findOne: jest.fn(),
     };
     const module: TestingModule = await Test.createTestingModule({
@@ -26,20 +26,20 @@ describe('ActivityService', () => {
           useValue: mockActivityRepository,
         },
         {
-          provide: TripService,
-          useValue: mockTripService,
+          provide: TripsService,
+          useValue: mockTripsService,
         },
       ],
     }).compile();
 
     service = module.get<ActivityService>(ActivityService);
     activityRepository = module.get(ActivityRepository);
-    tripService = module.get(TripService);
+    tripsService = module.get(TripsService);
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
     expect(activityRepository).toBeDefined();
-    expect(tripService).toBeDefined();
+    expect(tripsService).toBeDefined();
   });
 });

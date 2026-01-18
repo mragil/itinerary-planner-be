@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from '../src/app.module';
@@ -8,7 +8,7 @@ import { setupDatabase } from './setup-db';
 import { trips } from '../src/db-schema';
 import { eq } from 'drizzle-orm';
 
-describe('AppController (e2e)', () => {
+describe('TripsController (e2e)', () => {
   let app: INestApplication<App>;
   let db: Database;
   let tearDownDbContainer: () => Promise<void>;
@@ -27,6 +27,13 @@ describe('AppController (e2e)', () => {
       .compile();
 
     app = moduleFixture.createNestApplication();
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
+      }),
+    );
     await app.init();
 
     const registerResponse = await request(app.getHttpServer())
@@ -54,10 +61,10 @@ describe('AppController (e2e)', () => {
     if (tearDownDbContainer) await tearDownDbContainer();
   });
 
-  describe('POST /trip', () => {
+  describe('POST /trips', () => {
     it('should create a new trip', async () => {
       const response = await request(app.getHttpServer())
-        .post('/trip')
+        .post('/trips')
         .set('Authorization', `Bearer ${token}`)
         .send({
           name: 'Holiday in Paris',
@@ -70,10 +77,10 @@ describe('AppController (e2e)', () => {
     });
   });
 
-  describe('GET /trip', () => {
+  describe('GET /trips', () => {
     it('should return all user trip', async () => {
       const response = await request(app.getHttpServer())
-        .get('/trip')
+        .get('/trips')
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
@@ -81,21 +88,22 @@ describe('AppController (e2e)', () => {
     });
   });
 
-  describe('GET /trip/id', () => {
+  describe('GET /trips/id', () => {
     it('should return trip data with given id', async () => {
       const response = await request(app.getHttpServer())
-        .get('/trip/1')
+        .get('/trips/1')
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('name', 'Sample Trip');
+      expect(response.body).toHaveProperty('activities', []);
     });
   });
 
-  describe('PATCH /trip/id', () => {
+  describe('PATCH /trips/id', () => {
     it('should update trip data with given id', async () => {
       const response = await request(app.getHttpServer())
-        .patch('/trip/1')
+        .patch('/trips/1')
         .set('Authorization', `Bearer ${token}`)
         .send({
           name: 'Sample Trip Updated',
@@ -106,10 +114,10 @@ describe('AppController (e2e)', () => {
     });
   });
 
-  describe('DELETE /trip/id', () => {
+  describe('DELETE /trips/id', () => {
     it('should delete trip data with given id', async () => {
       const response = await request(app.getHttpServer())
-        .delete('/trip/1')
+        .delete('/trips/1')
         .set('Authorization', `Bearer ${token}`);
       const deletedTrips = await db.select().from(trips).where(eq(trips.id, 1));
 

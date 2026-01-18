@@ -1,6 +1,6 @@
 import { pgTable, serial, text, timestamp, boolean } from 'drizzle-orm/pg-core';
 import { getTableColumns } from 'drizzle-orm/utils';
-import { trips } from '../trip/trip.schema';
+import { trips } from '../trips/trips.schema';
 import { relations } from 'drizzle-orm/relations';
 
 export const users = pgTable('users', {

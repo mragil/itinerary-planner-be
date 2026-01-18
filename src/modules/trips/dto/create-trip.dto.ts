@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDateString, IsNotEmpty, IsString } from 'class-validator';
+import { IsDate, IsNotEmpty, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateTripDto {
   @ApiProperty()
@@ -13,12 +14,14 @@ export class CreateTripDto {
   destination: string;
 
   @ApiProperty()
-  @IsDateString()
+  @IsDate()
   @IsNotEmpty()
+  @Type(() => Date)
   startDate: Date;
 
   @ApiProperty()
-  @IsDateString()
+  @IsDate()
   @IsNotEmpty()
+  @Type(() => Date)
   endDate: Date;
 }
