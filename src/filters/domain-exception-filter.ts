@@ -18,7 +18,7 @@ function getInfo(exception: unknown): { statusCode: number; message: string } {
       response !== null &&
       'message' in response
     ) {
-      message = (response as any).message;
+      message = (response as { message: string }).message;
     }
     return { statusCode: exception.getStatus(), message };
   }

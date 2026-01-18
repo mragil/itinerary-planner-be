@@ -1,4 +1,4 @@
-import { Injectable, Inject, NotFoundException } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { eq, and } from 'drizzle-orm';
 import { trips, Trip, DetailTrip } from './trips.schema';
 import { DatabaseModule, type Database } from '../../database.module';

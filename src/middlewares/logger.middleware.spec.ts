@@ -54,7 +54,9 @@ describe('LoggerMiddleware', () => {
     );
 
     // Simulate response finish
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
     const finishCallback = onMock.mock.calls[0][1];
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     finishCallback();
 
     expect(onMock).toHaveBeenCalledWith('finish', expect.any(Function));
@@ -66,7 +68,12 @@ describe('LoggerMiddleware', () => {
   it('should log user info if present', () => {
     const onMock = jest.fn();
     mockResponse.on = onMock;
-    mockRequest['user'] = { sub: 123, email: 'user@test.com', name: 'User' };
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    (mockRequest as any).user = {
+      sub: 123,
+      email: 'user@test.com',
+      name: 'User',
+    };
 
     middleware.use(
       mockRequest as Request,
@@ -74,7 +81,9 @@ describe('LoggerMiddleware', () => {
       nextFunction,
     );
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
     const finishCallback = onMock.mock.calls[0][1];
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     finishCallback();
 
     expect(loggerSpy).toHaveBeenNthCalledWith(1, 'GET /test - Start');

@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ActivitiesRepository } from './activities.repository';
+import { NewActivity } from './activities.schema';
 import { DatabaseModule, type Database } from '../../database.module';
 import { createActivity } from '../../../test/fixtures/activities';
 
@@ -80,7 +81,7 @@ describe('ActivitiesRepository', () => {
     });
 
     it('should handle missing optional fields', async () => {
-      const activityWithoutOptionals = {
+      const activityWithoutOptionals: NewActivity = {
         name: 'Test Activity',
         type: 'Activity',
         location: 'Test Location',
@@ -90,7 +91,7 @@ describe('ActivitiesRepository', () => {
         isCompleted: false,
         tripId: 1,
         // notes and cost implicitly undefined
-      } as any;
+      };
 
       const expectedActivity = {
         ...activityWithoutOptionals,

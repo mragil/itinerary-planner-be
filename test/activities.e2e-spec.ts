@@ -6,7 +6,7 @@ import { AppModule } from '../src/app.module';
 import { Database, DatabaseModule } from '../src/database.module';
 import { setupDatabase } from './setup-db';
 import { trips, activities } from '../src/db-schema';
-import { eq, and } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 
 describe('ActivitiesController (e2e)', () => {
   let app: INestApplication<App>;
@@ -45,9 +45,12 @@ describe('ActivitiesController (e2e)', () => {
         name: 'Test User',
       });
 
-    const userId = registerResponse.body.user.id;
-    // eslint-disable-next-line
-    token = registerResponse.body.accessToken;
+    const responseBody = registerResponse.body as {
+      user: { id: number };
+      accessToken: string;
+    };
+    const userId = responseBody.user.id;
+    token = responseBody.accessToken;
 
     const [trip] = await db
       .insert(trips)
@@ -86,7 +89,9 @@ describe('ActivitiesController (e2e)', () => {
 
       expect(response.status).toBe(201);
       expect(response.body).toHaveProperty('id');
-      expect(response.body.name).toBe('Visit Eiffel Tower');
+      expect((response.body as { name: string }).name).toBe(
+        'Visit Eiffel Tower',
+      );
     });
   });
 
@@ -112,7 +117,7 @@ describe('ActivitiesController (e2e)', () => {
         });
 
       expect(response.status).toBe(200);
-      expect(response.body.name).toBe('Updated Activity');
+      expect((response.body as { name: string }).name).toBe('Updated Activity');
     });
   });
 

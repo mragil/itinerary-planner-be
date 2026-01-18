@@ -5,7 +5,7 @@ import { Request, Response } from 'express';
 describe('DomainExceptionFilter', () => {
   let filter: DomainExceptionFilter;
   let mockArgumentsHost: ArgumentsHost;
-  let mockHttpArgumentsHost: any;
+  let mockHttpArgumentsHost: { getResponse: jest.Mock; getRequest: jest.Mock };
   let mockResponse: Partial<Response>;
   let mockRequest: Partial<Request>;
   let statusMock: jest.Mock;
@@ -45,7 +45,7 @@ describe('DomainExceptionFilter', () => {
     expect(statusMock).toHaveBeenCalledWith(HttpStatus.FORBIDDEN);
     expect(jsonMock).toHaveBeenCalledWith({
       statusCode: HttpStatus.FORBIDDEN,
-      timestamp: expect.any(String),
+      timestamp: expect.any(String) as string,
       path: '/test-url',
       message: 'Forbidden',
     });
@@ -59,7 +59,7 @@ describe('DomainExceptionFilter', () => {
     expect(statusMock).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR);
     expect(jsonMock).toHaveBeenCalledWith({
       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-      timestamp: expect.any(String),
+      timestamp: expect.any(String) as string,
       path: '/test-url',
       message: 'Internal server error',
     });
@@ -92,7 +92,7 @@ describe('DomainExceptionFilter', () => {
     expect(statusMock).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST);
     expect(jsonMock).toHaveBeenCalledWith({
       statusCode: HttpStatus.BAD_REQUEST,
-      timestamp: expect.any(String),
+      timestamp: expect.any(String) as string,
       path: '/test-url',
       message: 'Http Exception',
     });
