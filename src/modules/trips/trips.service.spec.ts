@@ -27,6 +27,24 @@ describe('TripsService', () => {
     tripRepository = module.get(TripsRepository);
   });
 
+  describe('create', () => {
+    it('should create a new trip', async () => {
+      const createTripDto = {
+        name: 'Paris Trip',
+        destination: 'Paris',
+        startDate: new Date(),
+        endDate: new Date(),
+      };
+      const trip = createTrip(createTripDto);
+      tripRepository.create.mockResolvedValue(trip);
+
+      const result = await service.create(createTripDto, 1);
+
+      expect(tripRepository.create).toHaveBeenCalledWith(createTripDto, 1);
+      expect(result).toBe(trip);
+    });
+  });
+
   describe('findAll', () => {
     it('should return an array of trips', async () => {
       const result = { trips: [createTrip({})] };

@@ -103,4 +103,49 @@ describe('AuthService', () => {
       ).rejects.toThrow(InvalidCredentialsException);
     });
   });
+
+  describe('refreshTokens', () => {
+    it('should return new tokens with valid refresh token', async () => {
+      const mockUser = createUser({});
+      const jwtService = service['jwtService'] as jest.Mocked<JwtService>;
+      jwtService.verifyAsync = jest.fn().mockResolvedValue({
+        sub: 1,
+        email: 'test@example.com',
+        name: 'Test',
+      });
+      usersService.findByEmail.mockResolvedValue(mockUser);
+
+      const result = await service.refreshTokens('valid-refresh-token');
+
+      expect(result).toEqual({
+        accessToken: 'mocked-jwt-token',
+        refreshToken: 'mocked-jwt-token',
+      });
+    });
+
+    it('should throw UnauthorizedException if token is invalid', async () => {
+      const jwtService = service['jwtService'] as jest.Mocked<JwtService>;
+      jwtService.verifyAsync = jest
+        .fn()
+        .mockRejectedValue(new Error('Invalid'));
+
+      await expect(service.refreshTokens('invalid-token')).rejects.toThrow(
+        'Invalid refresh token',
+      );
+    });
+
+    it('should throw UnauthorizedException if user not found', async () => {
+      const jwtService = service['jwtService'] as jest.Mocked<JwtService>;
+      jwtService.verifyAsync = jest.fn().mockResolvedValue({
+        sub: 1,
+        email: 'deleted@example.com',
+        name: 'Deleted',
+      });
+      usersService.findByEmail.mockResolvedValue(undefined);
+
+      await expect(service.refreshTokens('valid-token')).rejects.toThrow(
+        'Invalid refresh token',
+      );
+    });
+  });
 });

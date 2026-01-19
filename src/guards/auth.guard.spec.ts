@@ -182,4 +182,25 @@ describe('AuthGuard', () => {
 
     expect(jwtService.verifyAsync).toHaveBeenCalledWith('cookie-token');
   });
+
+  it('should fall back to header when cookies exist but accessToken is undefined', async () => {
+    reflector.getAllAndOverride.mockReturnValue(false);
+    const mockRequest = {
+      headers: { authorization: 'Bearer header-token' },
+      cookies: {},
+    };
+    const context = {
+      getHandler: jest.fn(),
+      getClass: jest.fn(),
+      switchToHttp: jest.fn().mockReturnValue({
+        getRequest: jest.fn().mockReturnValue(mockRequest),
+      }),
+    } as unknown as ExecutionContext;
+
+    jwtService.verifyAsync.mockResolvedValue({ sub: 1, email: 'test' });
+
+    await guard.canActivate(context);
+
+    expect(jwtService.verifyAsync).toHaveBeenCalledWith('header-token');
+  });
 });
