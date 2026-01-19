@@ -138,4 +138,48 @@ describe('AuthGuard', () => {
       UnauthorizedException,
     );
   });
+
+  it('should allow access with valid token from cookie', async () => {
+    reflector.getAllAndOverride.mockReturnValue(false);
+    const mockRequest = {
+      headers: {},
+      cookies: { accessToken: 'valid-cookie-token' },
+    };
+    const context = {
+      getHandler: jest.fn(),
+      getClass: jest.fn(),
+      switchToHttp: jest.fn().mockReturnValue({
+        getRequest: jest.fn().mockReturnValue(mockRequest),
+      }),
+    } as unknown as ExecutionContext;
+
+    jwtService.verifyAsync.mockResolvedValue({ sub: 1, email: 'test' });
+
+    const result = await guard.canActivate(context);
+
+    expect(result).toBe(true);
+    expect(jwtService.verifyAsync).toHaveBeenCalledWith('valid-cookie-token');
+    expect(mockRequest['user']).toEqual({ sub: 1, email: 'test' });
+  });
+
+  it('should prefer cookie token over header token', async () => {
+    reflector.getAllAndOverride.mockReturnValue(false);
+    const mockRequest = {
+      headers: { authorization: 'Bearer header-token' },
+      cookies: { accessToken: 'cookie-token' },
+    };
+    const context = {
+      getHandler: jest.fn(),
+      getClass: jest.fn(),
+      switchToHttp: jest.fn().mockReturnValue({
+        getRequest: jest.fn().mockReturnValue(mockRequest),
+      }),
+    } as unknown as ExecutionContext;
+
+    jwtService.verifyAsync.mockResolvedValue({ sub: 1, email: 'test' });
+
+    await guard.canActivate(context);
+
+    expect(jwtService.verifyAsync).toHaveBeenCalledWith('cookie-token');
+  });
 });

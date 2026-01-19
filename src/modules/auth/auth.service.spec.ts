@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ConfigService } from '@nestjs/config';
 import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
 import { createUser } from '../../../test/fixtures/users';
@@ -19,13 +20,18 @@ describe('AuthService', () => {
       validateUser: jest.fn(),
     };
     const mockJwtService = {
-      signAsync: jest.fn().mockReturnValue('mocked-jwt-token'),
+      signAsync: jest.fn().mockResolvedValue('mocked-jwt-token'),
+    };
+    const mockConfigService = {
+      getOrThrow: jest.fn().mockReturnValue('secret'),
+      get: jest.fn().mockReturnValue('7d'),
     };
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
         { provide: UsersService, useValue: mockUsersService },
         { provide: JwtService, useValue: mockJwtService },
+        { provide: ConfigService, useValue: mockConfigService },
       ],
     }).compile();
 
@@ -48,6 +54,7 @@ describe('AuthService', () => {
 
       expect(result).toEqual({
         accessToken: 'mocked-jwt-token',
+        refreshToken: 'mocked-jwt-token',
         user: mockExistingUser,
       });
     });
@@ -68,7 +75,7 @@ describe('AuthService', () => {
   });
 
   describe('validateUserCredentials', () => {
-    it('should validate user credentials and return user', async () => {
+    it('should validate user credentials and return tokens', async () => {
       const userData = {
         email: 'test@example.com',
         password: 'password',
@@ -84,6 +91,7 @@ describe('AuthService', () => {
 
       expect(result).toEqual({
         accessToken: 'mocked-jwt-token',
+        refreshToken: 'mocked-jwt-token',
       });
     });
 

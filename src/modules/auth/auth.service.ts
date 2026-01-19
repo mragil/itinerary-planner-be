@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 
 import { UsersService } from '../users/users.service';
@@ -7,12 +8,14 @@ import {
   UserAlreadyExistsException,
 } from './auth.exceptions';
 import { TokenPayload } from '../app.types';
+import { User } from '../users/users.schema';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   async registerUser(userData: {
@@ -25,9 +28,8 @@ export class AuthService {
       throw new UserAlreadyExistsException(userData.email);
     }
     const user = await this.userService.create(userData);
-    const payload = { sub: user.id, email: user.email, name: user.name };
-    const token = await this.jwtService.signAsync(payload);
-    return { accessToken: token, user };
+    const tokens = await this.generateTokens(user);
+    return { ...tokens, user };
   }
 
   async validateUserCredentials(email: string, password: string) {
@@ -35,15 +37,38 @@ export class AuthService {
     if (!user) {
       throw new InvalidCredentialsException();
     }
+    return this.generateTokens(user);
+  }
+
+  async refreshTokens(refreshToken: string) {
+    try {
+      const payload = await this.jwtService.verifyAsync<TokenPayload>(
+        refreshToken,
+        { secret: this.configService.getOrThrow('JWT_REFRESH_SECRET') },
+      );
+      const user = await this.userService.findByEmail(payload.email);
+      if (!user) {
+        throw new UnauthorizedException();
+      }
+      return this.generateTokens(user);
+    } catch {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+  }
+
+  private async generateTokens(user: Omit<User, 'password'>) {
     const payload: TokenPayload = {
       sub: user.id,
       email: user.email,
       name: user.name,
     };
-    const token = await this.jwtService.signAsync(payload);
-
-    return {
-      accessToken: token,
-    };
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAsync(payload),
+      this.jwtService.signAsync(payload, {
+        secret: this.configService.getOrThrow('JWT_REFRESH_SECRET'),
+        expiresIn: this.configService.get('JWT_REFRESH_EXPIRES_IN') || '7d',
+      }),
+    ]);
+    return { accessToken, refreshToken };
   }
 }

@@ -1,7 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { App } from 'supertest/types';
+import cookieParser from 'cookie-parser';
 import { AppModule } from '../src/app.module';
 import { Database, DatabaseModule } from '../src/database.module';
 import { setupDatabase } from './setup-db';
@@ -24,6 +25,14 @@ describe('AppController (e2e)', () => {
       .compile();
 
     app = moduleFixture.createNestApplication();
+    app.use(cookieParser());
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
+      }),
+    );
     await app.init();
   }, 60000);
 
@@ -33,7 +42,7 @@ describe('AppController (e2e)', () => {
   });
 
   describe('POST /auth/register', () => {
-    it('should register a new user', async () => {
+    it('should register a new user and return tokens', async () => {
       const response = await request(app.getHttpServer())
         .post('/auth/register')
         .send({
@@ -56,12 +65,13 @@ describe('AppController (e2e)', () => {
         updatedAt: expect.any(String),
       });
       expect(response.body).toHaveProperty('accessToken');
+      expect(response.body).toHaveProperty('refreshToken');
+      expect(response.headers['set-cookie']).toBeDefined();
     });
   });
 
   describe('POST /auth/login', () => {
     beforeAll(async () => {
-      // Pre-register a user for login tests
       await request(app.getHttpServer()).post('/auth/register').send({
         email: 'testuser2@example.com',
         password: 'testpassword',
@@ -69,7 +79,7 @@ describe('AppController (e2e)', () => {
       });
     });
 
-    it('should login an existing user with correct credentials', async () => {
+    it('should login and return tokens with cookies', async () => {
       const response = await request(app.getHttpServer())
         .post('/auth/login')
         .send({
@@ -79,6 +89,49 @@ describe('AppController (e2e)', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('accessToken');
+      expect(response.body).toHaveProperty('refreshToken');
+      expect(response.headers['set-cookie']).toBeDefined();
+    });
+  });
+
+  describe('POST /auth/refresh', () => {
+    let cookies: string[];
+
+    beforeAll(async () => {
+      await request(app.getHttpServer()).post('/auth/register').send({
+        email: 'testuser3@example.com',
+        password: 'testpassword',
+        name: 'Test User 3',
+      });
+      const loginResponse = await request(app.getHttpServer())
+        .post('/auth/login')
+        .send({ email: 'testuser3@example.com', password: 'testpassword' });
+      cookies = loginResponse.headers['set-cookie'] as unknown as string[];
+    });
+
+    it('should refresh tokens using cookie', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/auth/refresh')
+        .set('Cookie', cookies);
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('accessToken');
+      expect(response.body).toHaveProperty('refreshToken');
+    });
+
+    it('should fail without refresh token cookie', async () => {
+      const response = await request(app.getHttpServer()).post('/auth/refresh');
+
+      expect(response.status).toBe(401);
+    });
+  });
+
+  describe('POST /auth/logout', () => {
+    it('should clear cookies on logout', async () => {
+      const response = await request(app.getHttpServer()).post('/auth/logout');
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({ message: 'Logged out' });
     });
   });
 });
