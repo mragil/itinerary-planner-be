@@ -53,19 +53,13 @@ describe('AppController (e2e)', () => {
 
       expect(response.status).toBe(201);
       expect(response.body).toHaveProperty('user', {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        id: expect.any(Number),
         email: 'testuser@example.com',
         name: 'Test User',
-        emailVerified: false,
-        roles: ['user'],
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        createdAt: expect.any(String),
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        updatedAt: expect.any(String),
+        id: expect.any(Number) as number,
       });
       expect(response.body).toHaveProperty('accessToken');
       expect(response.body).toHaveProperty('refreshToken');
+      expect(response.body).toHaveProperty('user');
       expect(response.headers['set-cookie']).toBeDefined();
     });
   });
@@ -90,6 +84,7 @@ describe('AppController (e2e)', () => {
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('accessToken');
       expect(response.body).toHaveProperty('refreshToken');
+      expect(response.body).toHaveProperty('user');
       expect(response.headers['set-cookie']).toBeDefined();
     });
   });
@@ -117,6 +112,7 @@ describe('AppController (e2e)', () => {
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('accessToken');
       expect(response.body).toHaveProperty('refreshToken');
+      expect(response.body).toHaveProperty('user');
     });
 
     it('should fail without refresh token cookie', async () => {

@@ -28,8 +28,8 @@ export class AuthService {
       throw new UserAlreadyExistsException(userData.email);
     }
     const user = await this.userService.create(userData);
-    const tokens = await this.generateTokens(user);
-    return { ...tokens, user };
+
+    return this.generateTokens(user);
   }
 
   async validateUserCredentials(email: string, password: string) {
@@ -37,6 +37,7 @@ export class AuthService {
     if (!user) {
       throw new InvalidCredentialsException();
     }
+
     return this.generateTokens(user);
   }
 
@@ -50,6 +51,7 @@ export class AuthService {
       if (!user) {
         throw new UnauthorizedException();
       }
+
       return this.generateTokens(user);
     } catch {
       throw new UnauthorizedException('Invalid refresh token');
@@ -69,6 +71,14 @@ export class AuthService {
         expiresIn: this.configService.get('JWT_REFRESH_EXPIRES_IN') || '7d',
       }),
     ]);
-    return { accessToken, refreshToken };
+    return {
+      accessToken,
+      refreshToken,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      },
+    };
   }
 }

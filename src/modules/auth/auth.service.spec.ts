@@ -55,7 +55,11 @@ describe('AuthService', () => {
       expect(result).toEqual({
         accessToken: 'mocked-jwt-token',
         refreshToken: 'mocked-jwt-token',
-        user: mockExistingUser,
+        user: {
+          email: mockExistingUser.email,
+          name: mockExistingUser.name,
+          id: mockExistingUser.id,
+        },
       });
     });
 
@@ -92,6 +96,11 @@ describe('AuthService', () => {
       expect(result).toEqual({
         accessToken: 'mocked-jwt-token',
         refreshToken: 'mocked-jwt-token',
+        user: {
+          email: mockExistingUser.email,
+          name: mockExistingUser.name,
+          id: mockExistingUser.id,
+        },
       });
     });
 
@@ -120,6 +129,11 @@ describe('AuthService', () => {
       expect(result).toEqual({
         accessToken: 'mocked-jwt-token',
         refreshToken: 'mocked-jwt-token',
+        user: {
+          email: mockUser.email,
+          name: mockUser.name,
+          id: mockUser.id,
+        },
       });
     });
 
