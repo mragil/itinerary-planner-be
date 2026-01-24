@@ -5,6 +5,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { ActivitiesModule } from './modules/activities/activities.module';
 import { TripsModule } from './modules/trips/trips.module';
 import { UsersModule } from './modules/users/users.module';
+import { HealthModule } from './modules/health/health.module';
 import { DatabaseModule } from './database.module';
 import configuration from './config/configuration';
 import { AuthGuard } from './guards/auth.guard';
@@ -21,6 +22,7 @@ import { LoggerMiddleware } from './middlewares/logger.middleware';
     TripsModule,
     UsersModule,
     ActivitiesModule,
+    HealthModule,
   ],
   providers: [
     {
