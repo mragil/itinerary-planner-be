@@ -1,98 +1,196 @@
+# TripJot Backend API
+
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+  <strong>A modern, production-ready REST API for trip itinerary planning</strong>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
+<p align="center">
+  <img src="https://img.shields.io/badge/node-%3E%3D22-brightgreen" alt="Node.js">
+  <img src="https://img.shields.io/badge/NestJS-11-E0234E?logo=nestjs&logoColor=white" alt="NestJS">
+  <img src="https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript&logoColor=white" alt="TypeScript">
+  <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL">
+  <img src="https://img.shields.io/badge/Drizzle_ORM-0.45-C5F74F?logo=drizzle&logoColor=black" alt="Drizzle ORM">
 </p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Overview
 
-## Project setup
+TripJot Backend is a RESTful API service that powers the TripJot itinerary planning application. It provides comprehensive endpoints for managing trips, activities, and user authentication with a focus on security, performance, and developer experience.
 
-```bash
-$ pnpm install
-```
+## Features
 
-## Compile and run the project
+- 🔐 **Authentication & Authorization** — JWT-based auth with access/refresh token flow
+- 🗓️ **Trip Management** — Create, update, delete, and organize travel itineraries
+- 📍 **Activity Planning** — Schedule and manage activities within trips
+- 👤 **User Management** — User registration, profile management, and preferences
+- 📖 **API Documentation** — Auto-generated Swagger/OpenAPI documentation
+- 🏥 **Health Checks** — Built-in health monitoring endpoints
+- 🐳 **Docker Ready** — Multi-stage Dockerfile for production deployment
+- ✅ **Fully Tested** — Unit tests and E2E tests with high coverage
 
-```bash
-# development
-$ pnpm run start
+## Tech Stack
 
-# watch mode
-$ pnpm run start:dev
+| Category        | Technology                               |
+| --------------- | ---------------------------------------- |
+| Framework       | [NestJS](https://nestjs.com/) v11        |
+| Language        | TypeScript 5.7                           |
+| Database        | PostgreSQL                               |
+| ORM             | [Drizzle ORM](https://orm.drizzle.team/) |
+| Authentication  | JWT (Access + Refresh tokens)            |
+| Validation      | class-validator, class-transformer       |
+| API Docs        | Swagger / OpenAPI                        |
+| Testing         | Jest, Supertest, Testcontainers          |
+| Package Manager | pnpm                                     |
 
-# production mode
-$ pnpm run start:prod
-```
+## Prerequisites
 
-## Run tests
+- **Node.js** >= 22
+- **pnpm** >= 9 (or use `corepack enable`)
+- **PostgreSQL** >= 14
+- **Docker** (optional, for containerized deployment)
 
-```bash
-# unit tests
-$ pnpm run test
+## Getting Started
 
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### 1. Clone the Repository
 
 ```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
+git clone <repository-url>
+cd itinerary-planner-be
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### 2. Install Dependencies
 
-## Resources
+```bash
+pnpm install
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+### 3. Configure Environment Variables
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+Copy the example environment file and update the values:
 
-## Support
+```bash
+cp .env.example .env
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+| Variable                 | Description                  | Example                                         |
+| ------------------------ | ---------------------------- | ----------------------------------------------- |
+| `NODE_ENV`               | Environment mode             | `development`                                   |
+| `PORT`                   | Server port                  | `3000`                                          |
+| `DATABASE_URL`           | PostgreSQL connection string | `postgresql://user:pass@localhost:5432/tripjot` |
+| `JWT_SECRET`             | Secret for access tokens     | `your_jwt_secret_key`                           |
+| `JWT_EXPIRES_IN`         | Access token TTL (seconds)   | `3600`                                          |
+| `JWT_REFRESH_SECRET`     | Secret for refresh tokens    | `your_jwt_refresh_secret`                       |
+| `JWT_REFRESH_EXPIRES_IN` | Refresh token TTL            | `7d`                                            |
+| `FRONTEND_URL`           | Frontend app URL (CORS)      | `http://localhost:5173`                         |
 
-## Stay in touch
+### 4. Run Database Migrations
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```bash
+pnpm drizzle-kit push
+```
+
+### 5. Start the Development Server
+
+```bash
+pnpm run start:dev
+```
+
+The API will be available at `http://localhost:3000`.
+
+## API Documentation
+
+Once the server is running, access the interactive Swagger documentation at:
+
+```
+http://localhost:3000/api
+```
+
+## Available Scripts
+
+| Script                | Description                              |
+| --------------------- | ---------------------------------------- |
+| `pnpm run start:dev`  | Start development server with hot-reload |
+| `pnpm run start:prod` | Start production server                  |
+| `pnpm run build`      | Build for production                     |
+| `pnpm run lint`       | Run ESLint with auto-fix                 |
+| `pnpm run format`     | Format code with Prettier                |
+| `pnpm run test`       | Run unit tests                           |
+| `pnpm run test:cov`   | Run tests with coverage report           |
+| `pnpm run test:e2e`   | Run end-to-end tests                     |
+| `pnpm run validate`   | Run lint, tests, and build (CI pipeline) |
+
+## Project Structure
+
+```
+src/
+├── config/           # Configuration module
+├── decorators/       # Custom decorators
+├── filters/          # Exception filters
+├── guards/           # Auth guards
+├── middlewares/      # Custom middleware
+├── modules/
+│   ├── activities/   # Activity management
+│   ├── auth/         # Authentication & authorization
+│   ├── health/       # Health check endpoints
+│   ├── trips/        # Trip management
+│   └── users/        # User management
+├── types/            # TypeScript type definitions
+├── app.module.ts     # Root application module
+├── database.module.ts# Database connection module
+└── main.ts           # Application entry point
+```
+
+## Docker Deployment
+
+Build and run with Docker:
+
+```bash
+# Build the image
+docker build -t tripjot-api .
+
+# Run the container
+docker run -p 3000:3000 \
+  -e DATABASE_URL="postgresql://user:pass@host:5432/tripjot" \
+  -e JWT_SECRET="your_secret" \
+  -e JWT_REFRESH_SECRET="your_refresh_secret" \
+  tripjot-api
+```
+
+Or use Docker Compose (recommended for local development with PostgreSQL).
+
+## Testing
+
+The project uses Jest for testing with Testcontainers for E2E tests.
+
+```bash
+# Run all unit tests
+pnpm run test
+
+# Run unit tests with coverage
+pnpm run test:cov
+
+# Run E2E tests (requires Docker)
+pnpm run test:e2e
+```
+
+## CI/CD
+
+This project includes GitHub Actions workflows for:
+
+- **Linting** — Code style and quality checks
+- **Unit Tests** — Automated testing with coverage
+- **E2E Tests** — Integration tests with Testcontainers
+- **Docker Build** — Container image building and publishing
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes using conventional commits
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project is licensed under the [MIT License](LICENSE).
